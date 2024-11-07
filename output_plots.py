@@ -55,23 +55,32 @@ category_orders = {
     'customer_type': ['one-time', 'repeat', 'regular', 'die-hard'],
 }
 
-# Function to generate and save boxplot
+# Function to generate and save bar plot
 def save_barplot(categorical_var, dependent_var, title, file_name):
     # Filter data and set category order
     plot_data = data.dropna(subset=[categorical_var, dependent_var])
     order = category_orders.get(categorical_var, None)
 
-    # Create boxplot
+    # Create plot with specific background color and white text
     plt.figure(figsize=(10, 6))
-    sns.barplot(x=categorical_var, y=dependent_var, data=plot_data, order=order)
-    plt.title(title, loc='left')
-    plt.xlabel('')
-    plt.ylabel(dependent_var.replace('_', ' ').title())
-    plt.xticks(rotation=0)
+    sns.set_style("darkgrid", {"axes.facecolor": "#212121", "grid.color": "gray"})
+    sns.set_context("talk")
+    sns.barplot(x=categorical_var, y=dependent_var, data=plot_data, order=order, color="steelblue",ci=None)
+
+    # Customize plot appearance
+    plt.title(title, loc='left', color='white')
+    plt.xlabel('', color='white')
+    plt.ylabel(dependent_var.replace('_', ' ').title(), color='white')
+    plt.xticks(rotation=0, color='white')
+
+    # Set y-axis to display as percentages
+    ticks = plt.yticks()[0]  # Get current y-ticks
+    plt.yticks(ticks=ticks, labels=[f'{int(tick * 100)}%' for tick in ticks], color='white')
+
     sns.despine(top=True, right=True)
 
     # Save plot
-    plt.savefig(f'graphs/{file_name}.png')
+    plt.savefig(f'graphs/{file_name}.png', facecolor='#212121')
     plt.close()
 
 # Generate and save plots
