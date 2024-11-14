@@ -18,7 +18,7 @@ data['last_order_date'] = pd.to_datetime(data['last_order_date'], errors='coerce
 
 # Calculate new variables
 data['average_tip'] = data['total_tips'] / data['total_orders']
-data['avg_tip_percentage'] = data['average_tip'] / data['average_order_value']
+data['Average Tip Percentage'] = data['average_tip'] / data['average_order_value']
 
 # Filter data for recent customers
 recent_data = data[(data['last_order_date'] >= '2023-10-14') & (data['last_order_date'] <= '2024-10-14')]
@@ -56,16 +56,16 @@ category_orders = {
 }
 
 # Function to generate and save bar plot
-def save_barplot(categorical_var, dependent_var, title, file_name):
+def save_barplot(categorical_var, dependent_var, title = None, file_name=None):
     # Filter data and set category order
     plot_data = data.dropna(subset=[categorical_var, dependent_var])
     order = category_orders.get(categorical_var, None)
 
     # Create plot with specific background color and white text
     plt.figure(figsize=(10, 6))
-    sns.set_style("darkgrid", {"axes.facecolor": "#212121", "grid.color": "gray"})
+    sns.set_style("darkgrid", {"axes.facecolor": "#000000", "grid.color": "gray"})
     sns.set_context("talk")
-    sns.barplot(x=categorical_var, y=dependent_var, data=plot_data, order=order, color="steelblue",ci=None)
+    sns.barplot(x=categorical_var, y=dependent_var, data=plot_data, order=order, color="steelblue",errorbar=None)
 
     # Customize plot appearance
     plt.title(title, loc='left', color='white')
@@ -80,11 +80,11 @@ def save_barplot(categorical_var, dependent_var, title, file_name):
     sns.despine(top=True, right=True)
 
     # Save plot
-    plt.savefig(f'graphs/{file_name}.png', facecolor='#212121')
+    plt.savefig(f'graphs/{file_name}.png', facecolor='#000000')
     plt.close()
 
 # Generate and save plots
-save_barplot('customer_term', 'avg_tip_percentage', 
-             'Average Tip Percentage by Customer Term', 'avg_tip_by_customer_term')
-save_barplot('customer_type', 'avg_tip_percentage', 
-             'Average Tip Percentage by Customer Type', 'avg_tip_by_customer_type')
+save_barplot('customer_term', 'Average Tip Percentage', 
+             title=None, file_name='Average tip by customer term')
+save_barplot('customer_type', 'Average Tip Percentage', 
+             title=None, file_name='Average tip by customer type')

@@ -33,7 +33,7 @@ def categorize_customer_term(first_order_date):
     elif pd.Timestamp('2018-01-01') <= first_order_date <= pd.Timestamp('2021-12-31'):
         return 'medium-term'
     elif pd.Timestamp('2022-01-01') <= first_order_date <= pd.Timestamp('2024-12-31'):
-        return 'short-term'
+        return 'new'
     return np.nan
 
 # Apply customer term only for recent customers directly
@@ -52,11 +52,11 @@ data['customer_term_full'] = data['first_order_date'].apply(categorize_customer_
 data['favorite_category_spend_ratio'] = round(data['favorite_category_spend_dollars'] / data['total_spent'], 4)
 data['favorite_item_spend_ratio'] = round(data['favorite_item_spend_dollars'] / data['total_spent'], 4)
 
-# Set category orders
-category_orders = {
-    'customer_term': ['short-term', 'medium-term', 'long-term'],
-    'customer_type': ['one-time', 'repeat', 'regular', 'die-hard'],
-}
+# Calculate the 90th percentile value for 'total_spent'
+threshold = data['total_spent'].quantile(0.9)
+
+# Create an indicator variable: 1 if total_spent is in the top 10%, else 0
+data['top_10_percent'] = (data['total_spent'] >= threshold).astype(int)
 
 # Save the updated data to a CSV file
 output_path = 'data/updated_customer_summary.csv'
